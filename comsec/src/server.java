@@ -18,30 +18,33 @@ public class server implements Runnable {
 
     public void run() {
         try {
+        	//väntar på att en klient ska connecta och skapar en ny tråd för ytterligare klienter
             SSLSocket socket=(SSLSocket)serverSocket.accept();
             newListener();
-            SSLSession session = socket.getSession();
+            
+            
+            // läser av clientens cert och hämtar namn
+            SSLSession session = socket.getSession();          
             X509Certificate cert = (X509Certificate)session.getPeerCertificateChain()[0];
             String subject = cert.getSubjectDN().getName();
+            
+            
+            
+            
+            // skriver ut antalet klienter och den nya klientens namn       Tobedeleted?
     	    numConnectedClients++;
             System.out.println("client connected");
             System.out.println("client name (cert subject DN field): " + subject);
             System.out.println(numConnectedClients + " concurrent connection(s)\n");
-
+            
+            
+            //skapar en ny reader och writer på socketen
             PrintWriter out = null;
             BufferedReader in = null;
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            String clientMsg = null;
-            while ((clientMsg = in.readLine()) != null) {
-			    String rev = new StringBuilder(clientMsg).reverse().toString();
-                System.out.println("received '" + clientMsg + "' from client");
-                System.out.print("sending '" + rev + "' to client...");
-				out.println(rev);
-				out.flush();
-                System.out.println("done\n");
-			}
+            
 			in.close();
 			out.close();
 			socket.close();
@@ -74,7 +77,13 @@ public class server implements Runnable {
             e.printStackTrace();
         }
     }
-
+    
+    
+    /**
+     * Sätter upp en SSL socket
+     * @param type
+     * @return
+     */
     private static ServerSocketFactory getServerSocketFactory(String type) {
         if (type.equals("TLS")) {
             SSLServerSocketFactory ssf = null;
