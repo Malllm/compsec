@@ -8,10 +8,12 @@ import javax.security.cert.X509Certificate;
 public class server implements Runnable {
     private ServerSocket serverSocket = null;
     private static int numConnectedClients = 0;
+    private AuthenticationManager am;
 
     public server(ServerSocket ss) throws IOException {
         serverSocket = ss;
         newListener();
+        am = new AuthenticationManager();
     }
 
     public void run() {
