@@ -61,15 +61,32 @@ public class server implements Runnable {
             else{
             	usertype = GOVERMENTAGENT;
             }
-            
+            String journal;
             switch(usertype){
             	case 0:	
-            		//return subject journal
+            		journal = am.getJournal(Integer.parseInt(subject));
+            		out.println(journal);          		
             		break;
             	case 1:
-            		//ask for which pnr nurse wants?
-            		//return journal if access else return error
-            		break;
+            		while(true){
+            		out.println("Insert Personnumber: ");
+            		String temp = in.readLine();
+            			if(temp.startsWith("q") || temp.startsWith("Q")){
+            				break;
+            			}
+            			if(temp.length() != 10){
+            				out.println("Input should be in format: ÅÅMMDDXXXX");
+            			}
+            			else{           				           			
+	            			try{
+	            				int pnr = Integer.parseInt(temp);
+	            				journal = am.getJournal(pnr);     //Var görs rättighetskollen?
+	            				out.println(journal); 
+	            			}catch(NumberFormatException nfe)  {  
+	            				out.println("Input should be in format: ÅÅMMDDXXXX");
+	            			}
+            			}
+            		}
             	case 2:
             		//read/write/create?
             		//ask for which pnr doctor wants?
