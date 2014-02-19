@@ -1,13 +1,19 @@
 import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
+import java.security.PublicKey;
+
 import javax.net.*;
 import javax.net.ssl.*;
 import javax.security.cert.X509Certificate;
 
 public class server implements Runnable {
+	private static int PRIVATEPERSON = 0;
+	private static int NURSE = 1;
+	private static int DOCTOR = 2;
+	private static int GOVERMENTAGENT = 3;
+	
     private ServerSocket serverSocket = null;
-    private static int numConnectedClients = 0;
     private AuthenticationManager am;
 
     public server(ServerSocket ss) throws IOException {
@@ -18,39 +24,69 @@ public class server implements Runnable {
 
     public void run() {
         try {
-        	//väntar på att en klient ska connecta och skapar en ny tråd för ytterligare klienter
+        	//vï¿½ntar pï¿½ att en klient ska connecta och skapar en ny trï¿½d fï¿½r ytterligare klienter
             SSLSocket socket=(SSLSocket)serverSocket.accept();
             newListener();
             
             
-            // läser av clientens cert och hämtar namn
+            // lï¿½ser av clientens cert och hï¿½mtar namn
             SSLSession session = socket.getSession();          
             X509Certificate cert = (X509Certificate)session.getPeerCertificateChain()[0];
             String subject = cert.getSubjectDN().getName();
+           
+           
+            //INSERT CHECK OF SIGNATURE OF CA HERE
+           // cert.verify(CApublickey);
             
-            
-            
-            
-            // skriver ut antalet klienter och den nya klientens namn       Tobedeleted?
-    	    numConnectedClients++;
+            // skriver ut den nya klientens namn
             System.out.println("client connected");
             System.out.println("client name (cert subject DN field): " + subject);
-            System.out.println(numConnectedClients + " concurrent connection(s)\n");
             
-            
-            //skapar en ny reader och writer på socketen
+            //skapar en ny reader och writer pï¿½ socketen
             PrintWriter out = null;
             BufferedReader in = null;
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
             
+            int usertype;
+            if(subject.length() > 4){
+            	usertype = PRIVATEPERSON;
+            }
+            else if(subject.substring(2).equals("01")){
+            	usertype = NURSE;
+            }
+            else if(subject.substring(2).equals("10")){
+            	usertype = DOCTOR;
+            }
+            else{
+            	usertype = GOVERMENTAGENT;
+            }
+            
+            switch(usertype){
+            	case 0:	
+            		//return subject journal
+            		break;
+            	case 1:
+            		//ask for which pnr nurse wants?
+            		//return journal if access else return error
+            		break;
+            	case 2:
+            		//read/write/create?
+            		//ask for which pnr doctor wants?
+            		//return journal if access else return error
+            		break;
+            	case 3:
+            		//read/delete?
+            		//ask for which pnr agent wants?
+            		//return or delete journal
+            		break;
+            }
+            
+         
 			in.close();
 			out.close();
 			socket.close();
-    	    numConnectedClients--;
             System.out.println("client disconnected");
-            System.out.println(numConnectedClients + " concurrent connection(s)\n");
 		} catch (IOException e) {
             System.out.println("Client died: " + e.getMessage());
             e.printStackTrace();
@@ -59,7 +95,6 @@ public class server implements Runnable {
     }
 
     private void newListener() { (new Thread(this)).start(); } // calls run()
-
     public static void main(String args[]) {
         System.out.println("\nServer Started\n");
         int port = -1;
@@ -80,7 +115,7 @@ public class server implements Runnable {
     
     
     /**
-     * Sätter upp en SSL socket
+     * Sï¿½tter upp en SSL socket
      * @param type
      * @return
      */
