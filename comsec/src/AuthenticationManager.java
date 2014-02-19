@@ -104,6 +104,25 @@ public class AuthenticationManager {
 		return txt;
 		
 	}
+	
+	public void deleteJournal(int pnr) {
+		String sql = "DELETE FROM Journals WHERE pnr = ?";
+		PreparedStatement ps = null;
+		
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnr);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				ps.close();
+				}  catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+	}
 }
 
 
