@@ -67,7 +67,7 @@ public class server implements Runnable {
             		journal = am.getJournal(Integer.parseInt(subject));
             		out.println(journal);          		
             		break;
-            	case 1:
+            	case NURSE:
             		while(true){
             		out.println("Insert Personnumber: ");
             		String temp = in.readLine();
@@ -80,7 +80,7 @@ public class server implements Runnable {
             			else{           				           			
 	            			try{
 	            				int pnr = Integer.parseInt(temp);
-	            				journal = am.getJournal(pnr);     //Var görs rättighetskollen?
+	            				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID");     //Var görs rättighetskollen?
 	            				out.println(journal); 
 	            			}catch(NumberFormatException nfe)  {  
 	            				out.println("Input should be in format: ÅÅMMDDXXXX");

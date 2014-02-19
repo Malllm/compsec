@@ -57,6 +57,31 @@ public class AuthenticationManager {
 		}
 	}
 	
+	public String getJournal(int pnr, int ID, String IDType) {
+		String sql = "SELECT journal FROM Journals WHERE pnr = ? AND ? = ?";
+		PreparedStatement ps = null;
+		ResultSet rs;
+		String txt = null;
+		try {
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnr);
+			ps.setString(2, IDType);
+			ps.setInt(3, ID);
+			rs = ps.executeQuery();
+			txt = rs.getString("journal");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				ps.close();
+				}  catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		return txt;
+		
+	}
+	
 	public String getJournal(int pnr) {
 		String sql = "SELECT journal FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
