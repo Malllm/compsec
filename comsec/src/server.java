@@ -67,7 +67,7 @@ public class server implements Runnable {
             		journal = am.getJournal(Integer.parseInt(subject));
             		out.println(journal);          		
             		break;
-            	case NURSE:
+            	case 1:
             		while(true){
             		out.println("Insert Personnumber: ");
             		String temp = in.readLine();
