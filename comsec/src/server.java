@@ -25,7 +25,7 @@ public class server implements Runnable {
     public void run() {
         try {
         	//v�ntar p� att en klient ska connecta och skapar en ny tr�d f�r ytterligare klienter
-            SSLSocket socket=(SSLSocket)serverSocket.accept();
+        	SSLSocket socket=(SSLSocket)serverSocket.accept();
             newListener();
             
             
@@ -34,9 +34,8 @@ public class server implements Runnable {
             X509Certificate cert = (X509Certificate)session.getPeerCertificateChain()[0];
             String subject = cert.getSubjectDN().getName();
            
-           
             //INSERT CHECK OF SIGNATURE OF CA HERE
-           // cert.verify(CApublickey);
+            //cert.verify(CApublickey);
             
             // skriver ut den nya klientens namn
             System.out.println("client connected");
@@ -56,6 +55,7 @@ public class server implements Runnable {
             	usertype = NURSE;
             }
             else if(subject.substring(2).equals("10")){
+            	System.out.println("Doctor");
             	usertype = DOCTOR;
             }
             else{
@@ -67,32 +67,58 @@ public class server implements Runnable {
             		journal = am.getJournal(Integer.parseInt(subject));
             		out.println(journal);          		
             		break;
-            	case 1:
-            		while(true){
-            		out.println("Insert Personnumber: ");
-            		String temp = in.readLine();
-            			if(temp.startsWith("q") || temp.startsWith("Q")){
-            				break;
-            			}
-            			if(temp.length() != 10){
-            				out.println("Input should be in format: ÅÅMMDDXXXX");
-            			}
-            			else{           				           			
-	            			try{
-	            				int pnr = Integer.parseInt(temp);
-	            				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID");     //Var görs rättighetskollen?
-	            				out.println(journal); 												//I hämtningen från databasen
-	            			}catch(NumberFormatException nfe)  {  
-	            				out.println("Input should be in format: ÅÅMMDDXXXX");
-	            			}
-            			}
-            		}
-            	case 2:
+            	case 1: //Nurse
+                	while(true){
+                		out.println("Write to journal[w] or read journal[r] ");
+                		String temp = in.readLine();
+                			if(temp.startsWith("q") || temp.startsWith("Q")){
+                				break;
+                			}
+                			if(temp.equals("r")){
+                				int pnr = readPnr(in, out);
+                				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID"); 		//Var görs rättighetskollen?
+                            	out.println(journal);														//I hämtningen från databasen
+                            	
+                			}else if(temp.equals("w")){  
+                				int pnr = readPnr(in, out);
+                				out.println("Text to add to journal: ");
+                				temp = in.readLine();
+                				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
+                				
+                			}
+                		}
+            		break;
+            	case 2: //Doctor
             		//read/write/create?
             		//ask for which pnr doctor wants?
             		//return journal if access else return error
+            		while(true){
+                		out.println("Create journal[c], write to journal[w] or read journal[r] ");
+                		String temp = in.readLine();
+                			if(temp.startsWith("q") || temp.startsWith("Q")){
+                				break;
+                			}
+                			if(temp.equals("r")){
+                				int pnr = readPnr(in, out);
+                				journal = am.getJournal(pnr, Integer.parseInt(subject), "doctorID"); 
+                            	out.println(journal);
+                            	
+                			}else if(temp.equals("w")){  
+                				int pnr = readPnr(in, out);
+                				out.println("Text to add to journal: ");
+                				temp = in.readLine();
+                				am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
+                				
+                			}else if(temp.equals("c")) {
+                				int pnr = readPnr(in, out);
+                				int nurseID = readNurseID(in, out);
+                				out.println("Text to insert into journal: ");
+                				temp = in.readLine();
+                				am.createJournal(pnr, Integer.parseInt(subject), nurseID, temp);
+                			}
+                		}
             		break;
-            	case 3:
+            	case 3: //Govermentagent
             		//read/delete?
             		//ask for which pnr agent wants?
             		//return or delete journal
@@ -109,6 +135,79 @@ public class server implements Runnable {
             e.printStackTrace();
             return;
         }
+    }
+    
+    private int readPnr(BufferedReader in, PrintWriter out) {
+    	String temp;
+    	int pnr = 0;
+    	out.println("Insert Personnumber: ");
+    	while(true){
+	    	try{
+	    		temp = in.readLine();
+	    		if(temp.startsWith("q") || temp.startsWith("Q")){
+    				break;
+    			}
+	    		if(temp.length() != 10){
+    				out.println("Input should be in format: ��MMDDXXXX");
+    			}else {
+    				try{
+					pnr = Integer.parseInt(temp);    												
+    				}catch(NumberFormatException nfe)  {  
+    					out.println("Input should be in format: ÅÅMMDDXXXX");
+    				}
+    				return pnr;
+    			}
+	    	} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+		return pnr;
+    }
+    
+    private int readNurseID(BufferedReader in, PrintWriter out) {
+    	String temp = null;
+    	int nurseID = 0;
+    	out.println("Insert nurse ID to associate with journal: ");
+    	while(true){
+    		try {
+    			temp = in.readLine();
+    		} catch (IOException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+	    	if(temp.startsWith("q") || temp.startsWith("Q")){
+				break;
+			}
+			if(temp.length() != 4){
+				out.println("Input should be in format: AALS");
+			}else {
+				try{
+					nurseID = Integer.parseInt(temp);    												
+				}catch(NumberFormatException nfe)  {  
+					out.println("Input should be in format: AALS");
+				}
+				return nurseID;
+			}
+    	}
+		return nurseID;
+    }
+    
+    private String readText(BufferedReader in, PrintWriter out) {
+    	String temp;
+    	while(true){
+	    	try{
+				out.println("Text to insert into journal: ");
+	    		temp = in.readLine();
+	    		if(temp.startsWith("q") || temp.startsWith("Q")){
+    				break;
+    			}
+	    	}catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    	}
+		return temp;
     }
 
     private void newListener() { (new Thread(this)).start(); } // calls run()

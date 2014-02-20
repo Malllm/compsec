@@ -26,7 +26,7 @@ public class client {
             System.exit(-1);
         }
         try { /* get input parameters */
-            host = args[0];
+            host =args[0];
             port = Integer.parseInt(args[1]);
         } catch (IllegalArgumentException e) {
             System.out.println("USAGE: java client host port");
@@ -68,6 +68,7 @@ public class client {
             System.out.println("certificate name (subject DN field) on certificate received from server:\n" + subject + "\n");
             System.out.println("socket after handshake:\n" + socket + "\n");
             System.out.println("secure connection established\n\n");
+
             
             
             BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
@@ -75,6 +76,7 @@ public class client {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String msg;
 			for (;;) {
+				System.out.println("received '" + in.readLine() + "' from server\n");
                 System.out.print(">");
                 msg = read.readLine();
                 if (msg.equalsIgnoreCase("quit")) {
@@ -85,7 +87,7 @@ public class client {
                 out.flush();
                 System.out.println("done");
 
-                System.out.println("received '" + in.readLine() + "' from server\n");
+                
             }
             in.close();
 			out.close();

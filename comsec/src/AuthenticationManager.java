@@ -17,15 +17,17 @@ public class AuthenticationManager {
 		}
 	}
 	
-	public void addJournal(int pnr, int doctorID, int nurseID, String journal) { //addPerson i Gdocs
-		String sql = "INSERT INTO Journals VALUES(?, ?, ?, ?)";
+	public void createJournal(int pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
+		int division = doctorID / 100;
+		String sql = "INSERT INTO Journals VALUES(?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnr);
 			ps.setInt(2, doctorID);
 			ps.setInt(3, nurseID);
-			ps.setString(4, journal);
+			ps.setInt(4, division);
+			ps.setString(5, txt);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -38,13 +40,16 @@ public class AuthenticationManager {
 		}
 	}
 	
-	public void addJournal(String txt, int pnr) {
-		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ?";
+	public void updateJournal(String txt, int pnr, int ID, String IDType) {
+		int division = ID / 100;
+		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND (" + IDType + " = ? OR division = ?)";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, txt);
 			ps.setInt(2, pnr);
+			ps.setInt(3, ID);
+			ps.setInt(4, division);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -58,16 +63,19 @@ public class AuthenticationManager {
 	}
 	
 	public String getJournal(int pnr, int ID, String IDType) {
-		String sql = "SELECT journal FROM Journals WHERE pnr = ? AND ? = ?";
+		System.out.println("ID " + ID + " type " + IDType);
+		int division = ID / 100;
+		String sql = "SELECT journal FROM Journals WHERE pnr = ? AND (" + IDType + " = ? OR division = ?)";
 		PreparedStatement ps = null;
 		ResultSet rs;
 		String txt = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnr);
-			ps.setString(2, IDType);
-			ps.setInt(3, ID);
+			ps.setInt(2, ID);
+			ps.setInt(3, division);
 			rs = ps.executeQuery();
+			rs.next();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
 			e.printStackTrace();
