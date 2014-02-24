@@ -122,6 +122,22 @@ public class server implements Runnable {
             		//read/delete?
             		//ask for which pnr agent wants?
             		//return or delete journal
+            		while(true){
+                		out.println("Read journal[r] or delete journal[d]");
+                		String temp = in.readLine();
+                			if(temp.startsWith("q") || temp.startsWith("Q")){
+                				break;
+                			}
+                			if(temp.equals("r")){
+                				int pnr = readPnr(in, out);
+                				journal = am.getJournal(pnr); 
+                            	out.println(journal);
+                            	
+                			}else if(temp.equals("w")){  
+                				int pnr = readPnr(in, out);
+                				am.deleteJournal(pnr);	
+                			}
+                		}
             		break;
             }
             
