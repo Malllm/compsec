@@ -41,15 +41,13 @@ public class AuthenticationManager {
 	}
 	
 	public void updateJournal(String txt, int pnr, int ID, String IDType) {
-		int division = ID / 100;
-		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND (" + IDType + " = ? OR division = ?)";
+		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND " + IDType + " = ?";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, txt);
 			ps.setInt(2, pnr);
 			ps.setInt(3, ID);
-			ps.setInt(4, division);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
