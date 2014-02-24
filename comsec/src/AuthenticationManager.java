@@ -17,6 +17,13 @@ public class AuthenticationManager {
 		}
 	}
 	
+	/**
+	 * Creates a new journal.
+	 * @param pnr
+	 * @param doctorID
+	 * @param nurseID
+	 * @param txt
+	 */
 	public void createJournal(int pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
 		int division = doctorID / 100;
 		String sql = "INSERT INTO Journals VALUES(?, ?, ?, ?, ?)";
@@ -40,6 +47,13 @@ public class AuthenticationManager {
 		}
 	}
 	
+	/**
+	 * Adds text to a journal if the journal is associated with the nurse/doctor or else generates a sqlException.
+	 * @param txt
+	 * @param pnr
+	 * @param ID
+	 * @param IDType Either nurseID or doctorID.
+	 */
 	public void updateJournal(String txt, int pnr, int ID, String IDType) {
 		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND " + IDType + " = ?";
 		PreparedStatement ps = null;
@@ -60,6 +74,13 @@ public class AuthenticationManager {
 		}
 	}
 	
+	/**
+	 * Lets the nurse/doctor get the journal if the id or the the division is correct.
+	 * @param pnr
+	 * @param ID
+	 * @param IDType
+	 * @return The text in the journal as a String.
+	 */
 	public String getJournal(int pnr, int ID, String IDType) {
 		System.out.println("ID " + ID + " type " + IDType);
 		int division = ID / 100;
@@ -88,6 +109,11 @@ public class AuthenticationManager {
 		
 	}
 	
+	/**
+	 * Returns the journal corresponding to the social security number, pnr.
+	 * @param pnr
+	 * @return The text in the journal as a String.
+	 */
 	public String getJournal(int pnr) {
 		String sql = "SELECT journal FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
@@ -110,7 +136,10 @@ public class AuthenticationManager {
 		return txt;
 		
 	}
-	
+	/**
+	 * Deletes the journal corresponding to the social security number, pnr.
+	 * @param pnr
+	 */
 	public void deleteJournal(int pnr) {
 		String sql = "DELETE FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
