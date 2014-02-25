@@ -75,12 +75,12 @@ public class server implements Runnable {
                 				break;
                 			}
                 			if(temp.equals("r")){
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID"); 		//Var görs rättighetskollen?
                             	out.println(journal);														//I hämtningen från databasen
                             	
                 			}else if(temp.equals("w")){  
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				out.println("Text to add to journal: ");
                 				temp = in.readLine();
                 				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
@@ -99,18 +99,18 @@ public class server implements Runnable {
                 				break;
                 			}
                 			if(temp.equals("r")){
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				journal = am.getJournal(pnr, Integer.parseInt(subject), "doctorID"); 
                             	out.println(journal);
                             	
                 			}else if(temp.equals("w")){  
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				out.println("Text to add to journal: ");
                 				temp = in.readLine();
                 				am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
                 				
                 			}else if(temp.equals("c")) {
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				int nurseID = readNurseID(in, out);
                 				out.println("Text to insert into journal: ");
                 				temp = in.readLine();
@@ -129,12 +129,12 @@ public class server implements Runnable {
                 				break;
                 			}
                 			if(temp.equals("r")){
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				journal = am.getJournal(pnr); 
                             	out.println(journal);
                             	
                 			}else if(temp.equals("w")){  
-                				int pnr = readPnr(in, out);
+                				long pnr = readPnr(in, out);
                 				am.deleteJournal(pnr);	
                 			}
                 		}
@@ -153,9 +153,9 @@ public class server implements Runnable {
         }
     }
     
-    private int readPnr(BufferedReader in, PrintWriter out) {
+    private long readPnr(BufferedReader in, PrintWriter out) {
     	String temp;
-    	int pnr = 0;
+    	long pnr = 0;
     	out.println("Insert Personnumber: ");
     	while(true){
 	    	try{
@@ -163,13 +163,13 @@ public class server implements Runnable {
 	    		if(temp.startsWith("q") || temp.startsWith("Q")){
     				break;
     			}
-	    		if(temp.length() != 10){
-    				out.println("Input should be in format: ��MMDDXXXX");
+	    		if(temp.length() != 1){
+    				out.println("Input should be in format: ÅÅÅÅMMDDXXXX");
     			}else {
     				try{
-					pnr = Integer.parseInt(temp);    												
+					pnr = Long.parseLong(temp);    												
     				}catch(NumberFormatException nfe)  {  
-    					out.println("Input should be in format: ÅÅMMDDXXXX");
+    					out.println("Input should be in format: ÅÅÅÅMMDDXXXX");
     				}
     				return pnr;
     			}

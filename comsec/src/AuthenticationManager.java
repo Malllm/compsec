@@ -24,13 +24,13 @@ public class AuthenticationManager {
 	 * @param nurseID
 	 * @param txt
 	 */
-	public void createJournal(int pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
+	public void createJournal(long pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
 		int division = doctorID / 100;
 		String sql = "INSERT INTO Journals VALUES(?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, pnr);
+			ps.setLong(1, pnr);
 			ps.setInt(2, doctorID);
 			ps.setInt(3, nurseID);
 			ps.setInt(4, division);
@@ -54,13 +54,13 @@ public class AuthenticationManager {
 	 * @param ID
 	 * @param IDType Either nurseID or doctorID.
 	 */
-	public void updateJournal(String txt, int pnr, int ID, String IDType) {
+	public void updateJournal(String txt, long pnr, int ID, String IDType) {
 		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND " + IDType + " = ?";
 		PreparedStatement ps = null;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, txt);
-			ps.setInt(2, pnr);
+			ps.setLong(2, pnr);
 			ps.setInt(3, ID);
 			ps.executeUpdate();
 		} catch (SQLException e) {
@@ -81,7 +81,7 @@ public class AuthenticationManager {
 	 * @param IDType
 	 * @return The text in the journal as a String.
 	 */
-	public String getJournal(int pnr, int ID, String IDType) {
+	public String getJournal(long pnr, int ID, String IDType) {
 		System.out.println("ID " + ID + " type " + IDType);
 		int division = ID / 100;
 		String sql = "SELECT journal FROM Journals WHERE pnr = ? AND (" + IDType + " = ? OR division = ?)";
@@ -90,7 +90,7 @@ public class AuthenticationManager {
 		String txt = null;
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, pnr);
+			ps.setLong(1, pnr);
 			ps.setInt(2, ID);
 			ps.setInt(3, division);
 			rs = ps.executeQuery();
@@ -114,14 +114,14 @@ public class AuthenticationManager {
 	 * @param pnr
 	 * @return The text in the journal as a String.
 	 */
-	public String getJournal(int pnr) {
+	public String getJournal(long pnr) {
 		String sql = "SELECT journal FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
 		ResultSet rs;
 		String txt = null;
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, pnr);
+			ps.setLong(1, pnr);
 			rs = ps.executeQuery();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
@@ -140,13 +140,13 @@ public class AuthenticationManager {
 	 * Deletes the journal corresponding to the social security number, pnr.
 	 * @param pnr
 	 */
-	public void deleteJournal(int pnr) {
+	public void deleteJournal(long pnr) {
 		String sql = "DELETE FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
 		
 		try {
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, pnr);
+			ps.setLong(1, pnr);
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
