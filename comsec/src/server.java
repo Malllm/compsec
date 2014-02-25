@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.net.*;
 import javax.net.ssl.*;
@@ -21,6 +23,11 @@ public class server implements Runnable {
         newListener();
         am = new AuthenticationManager();
     }
+    
+    // Till logfilen
+    String filepath ="logfile.txt";
+    Calendar cal = Calendar.getInstance();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     public void run() {
         try {
@@ -28,6 +35,11 @@ public class server implements Runnable {
         	SSLSocket socket=(SSLSocket)serverSocket.accept();
             newListener();
             
+            // Skapar logfil om den ej finns.
+            File file = new File(filepath);
+            if(!file.exists()){
+            	file.createNewFile();
+            }
             
             // l�ser av clientens cert och h�mtar namn
             SSLSession session = socket.getSession();          
@@ -40,6 +52,12 @@ public class server implements Runnable {
             // skriver ut den nya klientens namn
             System.out.println("client connected");
             System.out.println("client name (cert subject DN field): " + subject);
+            
+            try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+                out.println("[" + getTime() + "] " + subject + " connected.");
+            }catch (IOException e) {
+                System.out.println("Error");
+            }
             
             //skapar en ny reader och writer p� socketen
             PrintWriter out = null;
@@ -276,5 +294,9 @@ public class server implements Runnable {
             return ServerSocketFactory.getDefault();
         }
         return null;
+    }
+    
+    private String getTime(){
+    	return sdf.format(cal.getTime());
     }
 }
