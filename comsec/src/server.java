@@ -164,7 +164,7 @@ public class server implements Runnable {
     				break;
     			}
 	    		if(temp.length() != 10){
-    				out.println("Input should be in format: ÅÅMMDDXXXX");
+    				out.println("Input should be in format: ï¿½ï¿½MMDDXXXX");
     			}else {
     				try{
 					pnr = Integer.parseInt(temp);    												
@@ -278,3 +278,5 @@ public class server implements Runnable {
         return null;
     }
 }
+
+// TEST
