@@ -181,7 +181,7 @@ public class server implements Runnable {
 	    		if(temp.startsWith("q") || temp.startsWith("Q")){
     				break;
     			}
-	    		if(temp.length() != 1){
+	    		if(temp.length() != 12){
     				out.println("Input should be in format: ÅÅÅÅMMDDXXXX");
     			}else {
     				try{
