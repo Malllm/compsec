@@ -123,6 +123,7 @@ public class AuthenticationManager {
 			ps = conn.prepareStatement(sql);
 			ps.setLong(1, pnr);
 			rs = ps.executeQuery();
+			rs.next();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
 			e.printStackTrace();

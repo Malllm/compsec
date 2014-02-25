@@ -65,6 +65,7 @@ public class server implements Runnable {
             out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             
+            
             int usertype;
             if(subject.length() > 4){
             	usertype = PRIVATEPERSON;
@@ -151,7 +152,7 @@ public class server implements Runnable {
                 				journal = am.getJournal(pnr); 
                             	out.println(journal);
                             	
-                			}else if(temp.equals("w")){  
+                			}else if(temp.equals("d")){  
                 				long pnr = readPnr(in, out);
                 				am.deleteJournal(pnr);	
                 			}
