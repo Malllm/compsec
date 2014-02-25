@@ -2,6 +2,8 @@ import java.io.*;
 import java.net.*;
 import java.security.KeyStore;
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.net.*;
 import javax.net.ssl.*;
@@ -15,7 +17,12 @@ public class server implements Runnable {
 	
     private ServerSocket serverSocket = null;
     private AuthenticationManager am;
-
+    
+    // Används till logfilen
+    String filepath ="logfile.txt";
+    Calendar cal = Calendar.getInstance();
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    
     public server(ServerSocket ss) throws IOException {
         serverSocket = ss;
         newListener();
@@ -24,6 +31,13 @@ public class server implements Runnable {
 
     public void run() {
         try {
+        	
+        	// Kollar om en logfil finns. Om inte, så skapas den.
+        	File file = new File(filepath);
+            if(!file.exists()){
+            	file.createNewFile();
+            }
+        	
         	//v�ntar p� att en klient ska connecta och skapar en ny tr�d f�r ytterligare klienter
         	SSLSocket socket=(SSLSocket)serverSocket.accept();
             newListener();
@@ -40,6 +54,13 @@ public class server implements Runnable {
             // skriver ut den nya klientens namn
             System.out.println("client connected");
             System.out.println("client name (cert subject DN field): " + subject);
+            
+            // Skriver till logfilen
+            try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+                out.println("[" + getTime() + "] " + subject + " has connected to server.");
+            }catch (IOException e) {
+                System.out.println("Error");
+            }
             
             //skapar en ny reader och writer p� socketen
             PrintWriter out = null;
@@ -65,7 +86,7 @@ public class server implements Runnable {
             switch(usertype){
             	case 0:	
             		journal = am.getJournal(Integer.parseInt(subject));
-            		out.println(journal);          		
+            		out.println(journal);
             		break;
             	case 1: //Nurse
                 	while(true){
@@ -164,7 +185,7 @@ public class server implements Runnable {
     				break;
     			}
 	    		if(temp.length() != 10){
-    				out.println("Input should be in format: ��MMDDXXXX");
+    				out.println("Input should be in format: ÅÅMMDDXXXX");
     			}else {
     				try{
 					pnr = Integer.parseInt(temp);    												
@@ -276,5 +297,11 @@ public class server implements Runnable {
             return ServerSocketFactory.getDefault();
         }
         return null;
+    }
+    
+    // Returnerar vad klockan är
+    private String getTime(){
+    	cal.getTime();
+    	return sdf.format(cal.getTime());
     }
 }
