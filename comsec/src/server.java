@@ -89,8 +89,9 @@ public class server implements Runnable {
                 String journal;
                 switch(usertype){
                 	case 0:	
-                		journal = am.getJournal(Integer.parseInt(subject));
+                		journal = am.getJournal(Long.parseLong(subject));
                 		out.println(journal);   
+                		out.flush();
                 		logRead(subject, Long.parseLong(subject));
                 		break;
                 	case 1: //Nurse
@@ -110,6 +111,7 @@ public class server implements Runnable {
                     			}else if(temp.equals("w")){  
                     				long pnr = readPnr(in, out);
                     				out.println("Text to add to journal: ");
+                    				out.flush();
                     				temp = in.readLine();
                     				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
                     				
@@ -131,6 +133,7 @@ public class server implements Runnable {
                     				long pnr = readPnr(in, out);
                     				journal = am.getJournal(pnr, Integer.parseInt(subject), "doctorID"); 
                                 	out.println(journal);
+                                	out.flush();
                                 	
                                 	logRead(subject, pnr);
                     			}else if(temp.equals("w")){  
