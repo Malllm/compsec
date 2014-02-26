@@ -91,6 +91,7 @@ public class client {
                 System.out.print(">");
                 msg = read.readLine();
                 if (msg.equalsIgnoreCase("quit")) {
+                	 out.println("q");
 				    break;
 				}
                 System.out.print("sending '" + msg + "' to server...");
