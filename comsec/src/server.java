@@ -52,7 +52,8 @@ public class server implements Runnable {
                 SSLSession session = socket.getSession();          
                 X509Certificate cert = (X509Certificate)session.getPeerCertificateChain()[0];
                 String subject = cert.getSubjectDN().getName();
-               
+                subject = subject.substring(3);
+                System.out.println(subject);
                 KeyStore ts = KeyStore.getInstance("JKS");
                 ts.load(new FileInputStream("servertruststore"), "server".toCharArray()); // truststore password (storepass);
                 cert.verify(ts.getCertificate("CAserver").getPublicKey());
@@ -103,6 +104,7 @@ public class server implements Runnable {
                     				long pnr = readPnr(in, out);
                     				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID"); 		//Var görs rättighetskollen?
                                 	out.println(journal);														//I hämtningen från databasen
+                                	out.flush();
                                 	
                                 	logRead(subject, pnr);
                     			}else if(temp.equals("w")){  
