@@ -7,12 +7,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.net.*;
 import javax.net.ssl.*;
-import javax.security.cert.CertificateException;
 import javax.security.cert.X509Certificate;
 
 public class server implements Runnable {
@@ -51,15 +51,11 @@ public class server implements Runnable {
             SSLSession session = socket.getSession();          
             X509Certificate cert = (X509Certificate)session.getPeerCertificateChain()[0];
             String subject = cert.getSubjectDN().getName();
-            
-            
-            KeyStore ts;
-            ts = KeyStore.getInstance("JKS");
-            ts.load(new FileInputStream("servertruststore"), "server".toCharArray()); // truststore password (storepass)
+           
+            KeyStore ts = KeyStore.getInstance("JKS");
+            ts.load(new FileInputStream("servertruststore"), "server".toCharArray()); // truststore password (storepass);
             cert.verify(ts.getCertificate("CA").getPublicKey());
-            //cert.verify(CApublickey); //DONE
             
-          
             
             // skriver ut den nya klientens namn
             System.out.println("client connected");
@@ -188,10 +184,16 @@ public class server implements Runnable {
             System.out.println("Client died: " + e.getMessage());
             e.printStackTrace();
             return;
-        } catch (InvalidKeyException e) {
+        } catch (KeyStoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CertificateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NoSuchProviderException e) {
@@ -200,13 +202,7 @@ public class server implements Runnable {
 		} catch (SignatureException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CertificateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (java.security.cert.CertificateException e) {
+		} catch (javax.security.cert.CertificateException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
