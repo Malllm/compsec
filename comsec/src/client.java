@@ -79,8 +79,8 @@ public class client {
             
             
             KeyStore ts = KeyStore.getInstance("JKS");
-            ts.load(new FileInputStream("clienttruststore"), "password".toCharArray()); // truststore password (storepass);
-            cert.verify(ts.getCertificate("CA").getPublicKey());
+            ts.load(new FileInputStream("clienttruststore"), "CLIENTpassTRUSTwordSTORE".toCharArray()); // truststore password (storepass);
+            cert.verify(ts.getCertificate("CAclient").getPublicKey());
             
                        
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
