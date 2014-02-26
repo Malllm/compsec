@@ -53,11 +53,7 @@ public class server implements Runnable {
             System.out.println("client connected");
             System.out.println("client name (cert subject DN field): " + subject);
             
-            try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
-                out.println("[" + getTime() + "] " + subject + " connected.");
-            }catch (IOException e) {
-                System.out.println("Error");
-            }
+            logConnection(subject);
             
             //skapar en ny reader och writer p� socketen
             PrintWriter out = null;
@@ -84,7 +80,8 @@ public class server implements Runnable {
             switch(usertype){
             	case 0:	
             		journal = am.getJournal(Integer.parseInt(subject));
-            		out.println(journal);          		
+            		out.println(journal);   
+            		logRead(subject, Long.parseLong(subject));
             		break;
             	case 1: //Nurse
                 	while(true){
@@ -98,12 +95,14 @@ public class server implements Runnable {
                 				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID"); 		//Var görs rättighetskollen?
                             	out.println(journal);														//I hämtningen från databasen
                             	
+                            	logRead(subject, pnr);
                 			}else if(temp.equals("w")){  
                 				long pnr = readPnr(in, out);
                 				out.println("Text to add to journal: ");
                 				temp = in.readLine();
                 				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
                 				
+                				logWrite(subject, pnr);
                 			}
                 		}
             		break;
@@ -122,18 +121,22 @@ public class server implements Runnable {
                 				journal = am.getJournal(pnr, Integer.parseInt(subject), "doctorID"); 
                             	out.println(journal);
                             	
+                            	logRead(subject, pnr);
                 			}else if(temp.equals("w")){  
                 				long pnr = readPnr(in, out);
                 				out.println("Text to add to journal: ");
                 				temp = in.readLine();
                 				am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
                 				
+                				logWrite(subject, pnr);
                 			}else if(temp.equals("c")) {
                 				long pnr = readPnr(in, out);
                 				int nurseID = readNurseID(in, out);
                 				out.println("Text to insert into journal: ");
                 				temp = in.readLine();
                 				am.createJournal(pnr, Integer.parseInt(subject), nurseID, temp);
+                				
+                				logCreate(subject, nurseID, pnr);
                 			}
                 		}
             		break;
@@ -152,9 +155,12 @@ public class server implements Runnable {
                 				journal = am.getJournal(pnr); 
                             	out.println(journal);
                             	
+                            	logRead(subject, pnr);
                 			}else if(temp.equals("d")){  
                 				long pnr = readPnr(in, out);
-                				am.deleteJournal(pnr);	
+                				am.deleteJournal(pnr);
+                				
+                				logDelete(subject, pnr);
                 			}
                 		}
             		break;
@@ -165,6 +171,7 @@ public class server implements Runnable {
 			out.close();
 			socket.close();
             System.out.println("client disconnected");
+            logExit(subject);
 		} catch (IOException e) {
             System.out.println("Client died: " + e.getMessage());
             e.printStackTrace();
@@ -297,7 +304,59 @@ public class server implements Runnable {
         return null;
     }
     
+// privata metoder till loggen
+    
     private String getTime(){
     	return sdf.format(cal.getTime());
+    }
+    
+    private void logConnection(String subject){
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\tUser " + subject + " connected.");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
+    }
+    
+    private void logExit(String subject){
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\tUser " + subject + " has logged out.");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
+    }
+    
+    private void logRead(String subject, long pnr){
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\tUser " + subject + " read record about " + pnr + ".");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
+    }
+    
+    private void logWrite(String subject, long pnr){
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\tUser " + subject + " added to record about " + pnr +
+            		".");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
+    }
+    
+    private void logCreate(String subject, int nurseID, long pnr) {
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\t" + "User " + subject + " created record about " + pnr +
+            			" and assigned nurse " + nurseID + " to that patient");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
+	}
+    
+    private void logDelete(String subject, long pnr){
+    	try(PrintWriter printer = new PrintWriter(new BufferedWriter(new FileWriter(filepath, true)))) {
+            printer.println("[" + getTime() + "]\t" + subject + " deleted record about " + pnr + ".");
+        }catch (IOException e) {
+            System.out.println("Error");
+        }
     }
 }
