@@ -1,7 +1,5 @@
-DROP TABLE IF EXISTS Files;
-DROP TABLE IF EXISTS Journals;
 
-CREATE TABLE Files(fileName VARCHAR(200) NOT NULL, fileContent BLOB, PRIMARY KEY (fileName)); 
+DROP TABLE IF EXISTS Journals;
 
 CREATE TABLE Journals(pnr BIGINT(12) NOT NULL,  doctorID INT(4), nurseID INT(4), 
 division INT(2), journal TEXT, PRIMARY KEY (pnr));
