@@ -16,34 +16,42 @@ import java.security.cert.*;
 public class client {
 
     public static void main(String[] args) throws Exception {
-        String host = null;
-        int port = -1;
-        for (int i = 0; i < args.length; i++) {
+        String host = "localhost";
+        int port = 8080;
+        /*for (int i = 0; i < args.length; i++) {
             System.out.println("args[" + i + "] = " + args[i]);
         }
         if (args.length < 2) {
             System.out.println("USAGE: java client host port");
             System.exit(-1);
         }
-        try { /* get input parameters */
+        try {  get input parameters 
             host =args[0];
             port = Integer.parseInt(args[1]);
         } catch (IllegalArgumentException e) {
             System.out.println("USAGE: java client host port");
             System.exit(-1);
-        }
+        }*/
+        String user;
+        BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("User/ID :");
+        System.out.print(">");
+        user = read.readLine();
+        
+        char[] password;
+        password = System.console().readPassword("password >");
+        System.out.println(password);
 
         try { /* set up a key manager for client authentication */
             SSLSocketFactory factory = null;
             try {
-                char[] password = "password".toCharArray();
                 KeyStore ks = KeyStore.getInstance("JKS");
                 KeyStore ts = KeyStore.getInstance("JKS");
                 KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
                 TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
                 SSLContext ctx = SSLContext.getInstance("TLS");
-                ks.load(new FileInputStream("clientkeystore"), password);  // keystore password (storepass)
-				ts.load(new FileInputStream("clienttruststore"), password); // truststore password (storepass);
+                ks.load(new FileInputStream(user.toString()+ "-store"), password);  // keystore password (storepass)
+				ts.load(new FileInputStream("clienttruststore"), "CLIENTpassTRUSTwordSTORE".toCharArray()); // truststore password (storepass);
 				kmf.init(ks, password); // user password (keypass)
 				tmf.init(ts); // keystore can be used as truststore here
 				ctx.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
@@ -68,10 +76,13 @@ public class client {
             System.out.println("certificate name (subject DN field) on certificate received from server:\n" + subject + "\n");
             System.out.println("socket after handshake:\n" + socket + "\n");
             System.out.println("secure connection established\n\n");
-
             
             
-            BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+            KeyStore ts = KeyStore.getInstance("JKS");
+            ts.load(new FileInputStream("clienttruststore"), "password".toCharArray()); // truststore password (storepass);
+            cert.verify(ts.getCertificate("CA").getPublicKey());
+            
+                       
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String msg;
