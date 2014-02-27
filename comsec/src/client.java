@@ -86,16 +86,25 @@ public class client {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String msg;
+            String pmsg;
 			for (;;) {
-				System.out.println("received '" + in.readLine() + "' from server\n");
+				while(true){
+					String tmp = in.readLine();
+					if(tmp.endsWith("*")){
+						msg = tmp.substring(0, tmp.length()-2);
+						System.out.println(msg);
+						break;
+					}
+					System.out.println(tmp);
+				}
                 System.out.print(">");
-                msg = read.readLine();
-                if (msg.equalsIgnoreCase("quit")) {
+                pmsg = read.readLine();
+                if (pmsg.equalsIgnoreCase("quit")) {
                 	 out.println("q");
 				    break;
 				}
-                System.out.print("sending '" + msg + "' to server...");
-                out.println(msg);
+                System.out.print("sending '" + pmsg + "' to server...");
+                out.println(pmsg);
                 out.flush();
                 System.out.println("done");
 

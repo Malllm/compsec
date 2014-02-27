@@ -97,13 +97,18 @@ public class AuthenticationManager {
 			rs.next();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			txt = "That person doesn't have a journal";
 		}finally {
 			try {
 				ps.close();
 				}  catch (SQLException e) {
 					e.printStackTrace();
 				}
+		}
+		System.out.println(txt);
+		if(txt.equals("null")){
+			txt = "no access rights";
+			System.out.println(txt);
 		}
 		return txt;
 		
@@ -126,7 +131,7 @@ public class AuthenticationManager {
 			rs.next();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			txt = "That person doesn't have a journal";
 		}finally {
 			try {
 				ps.close();

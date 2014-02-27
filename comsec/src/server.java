@@ -90,13 +90,13 @@ public class server implements Runnable {
                 switch(usertype){
                 	case 0:	
                 		journal = am.getJournal(Long.parseLong(subject));
-                		out.println(journal);   
+                		out.println(journal+"*");
                 		out.flush();
                 		logRead(subject, Long.parseLong(subject));
                 		break;
                 	case 1: //Nurse
                     	while(true){
-                    		out.println("Write to journal[w] or read journal[r] ");
+                    		out.println("Write to journal[w] or read journal[r]*");
                     		String temp = in.readLine();
                     			if(temp.startsWith("q") || temp.startsWith("Q")){
                     				break;
@@ -104,13 +104,18 @@ public class server implements Runnable {
                     			if(temp.equals("r")){
                     				long pnr = readPnr(in, out);
                     				journal = am.getJournal(pnr, Integer.parseInt(subject), "nurseID"); 		//Var görs rättighetskollen?
-                                	out.println(journal);														//I hämtningen från databasen
+                                	if(journal != "null"){														//I hämtningen från databasen
+                                		out.println(journal);	
+                                	}
+                                	else{
+                                		out.println("Ingen journal till den personen");
+                                	}
                                 	out.flush();
                                 	
                                 	logRead(subject, pnr);
                     			}else if(temp.equals("w")){  
                     				long pnr = readPnr(in, out);
-                    				out.println("Text to add to journal: ");
+                    				out.println("Text to add to journal:*");
                     				out.flush();
                     				temp = in.readLine();
                     				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
@@ -124,7 +129,7 @@ public class server implements Runnable {
                 		//ask for which pnr doctor wants?
                 		//return journal if access else return error
                 		while(true){
-                    		out.println("Create journal[c], write to journal[w] or read journal[r] ");
+                    		out.println("Create journal[c], write to journal[w] or read journal[r]*");
                     		String temp = in.readLine();
                     			if(temp.startsWith("q") || temp.startsWith("Q")){
                     				break;
@@ -138,7 +143,7 @@ public class server implements Runnable {
                                 	logRead(subject, pnr);
                     			}else if(temp.equals("w")){  
                     				long pnr = readPnr(in, out);
-                    				out.println("Text to add to journal: ");
+                    				out.println("Text to add to journal:*");
                     				temp = in.readLine();
                     				am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
                     				
@@ -146,7 +151,7 @@ public class server implements Runnable {
                     			}else if(temp.equals("c")) {
                     				long pnr = readPnr(in, out);
                     				int nurseID = readNurseID(in, out);
-                    				out.println("Text to insert into journal: ");
+                    				out.println("Text to insert into journal:*");
                     				temp = in.readLine();
                     				am.createJournal(pnr, Integer.parseInt(subject), nurseID, temp);
                     				
@@ -159,7 +164,7 @@ public class server implements Runnable {
                 		//ask for which pnr agent wants?
                 		//return or delete journal
                 		while(true){
-                    		out.println("Read journal[r] or delete journal[d]");
+                    		out.println("Read journal[r] or delete journal[d]*");
                     		String temp = in.readLine();
                     			if(temp.startsWith("q") || temp.startsWith("Q")){
                     				break;
@@ -219,7 +224,7 @@ public class server implements Runnable {
     private long readPnr(BufferedReader in, PrintWriter out) {
     	String temp;
     	long pnr = 0;
-    	out.println("Insert Personnumber: ");
+    	out.println("Insert Personnumber:*");
     	while(true){
 	    	try{
 	    		temp = in.readLine();
@@ -227,12 +232,12 @@ public class server implements Runnable {
     				break;
     			}
 	    		if(temp.length() != 12){
-    				out.println("Input should be in format: ÅÅÅÅMMDDXXXX");
+    				out.println("Input should be in format: ÅÅÅÅMMDDXXXX*");
     			}else {
     				try{
 					pnr = Long.parseLong(temp);    												
     				}catch(NumberFormatException nfe)  {  
-    					out.println("Input should be in format: ÅÅÅÅMMDDXXXX");
+    					out.println("Input should be in format: ÅÅÅÅMMDDXXXX*");
     				}
     				return pnr;
     			}
@@ -247,7 +252,7 @@ public class server implements Runnable {
     private int readNurseID(BufferedReader in, PrintWriter out) {
     	String temp = null;
     	int nurseID = 0;
-    	out.println("Insert nurse ID to associate with journal: ");
+    	out.println("Insert nurse ID to associate with journal:*");
     	while(true){
     		try {
     			temp = in.readLine();
@@ -259,12 +264,12 @@ public class server implements Runnable {
 				break;
 			}
 			if(temp.length() != 4){
-				out.println("Input should be in format: AALS");
+				out.println("Input should be in format: AALS*");
 			}else {
 				try{
 					nurseID = Integer.parseInt(temp);    												
 				}catch(NumberFormatException nfe)  {  
-					out.println("Input should be in format: AALS");
+					out.println("Input should be in format: AALS*");
 				}
 				return nurseID;
 			}
@@ -276,7 +281,7 @@ public class server implements Runnable {
     	String temp;
     	while(true){
 	    	try{
-				out.println("Text to insert into journal: ");
+				out.println("Text to insert into journal:*");
 	    		temp = in.readLine();
 	    		if(temp.startsWith("q") || temp.startsWith("Q")){
     				break;
