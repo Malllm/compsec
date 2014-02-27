@@ -34,13 +34,13 @@ public class client {
         }*/
         String user;
         BufferedReader read = new BufferedReader(new InputStreamReader(System.in));
+        while(true){
         System.out.println("User/ID :");
         System.out.print(">");
         user = read.readLine();
         
         char[] password;
         password = System.console().readPassword("password >");
-        System.out.println(password);
 
         try { /* set up a key manager for client authentication */
             SSLSocketFactory factory = null;
@@ -115,7 +115,8 @@ public class client {
 			read.close();
             socket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+           System.out.println("Invalid login information");
+        }
         }
     }
 
