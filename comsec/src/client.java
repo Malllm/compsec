@@ -91,7 +91,7 @@ public class client {
 				while(true){
 					String tmp = in.readLine();
 					if(tmp.endsWith("*")){
-						msg = tmp.substring(0, tmp.length()-2);
+						msg = tmp.substring(0, tmp.length()-1);
 						System.out.println(msg);
 						break;
 					}
