@@ -60,6 +60,7 @@ public class AuthenticationManager {
 		String msg = "Journal was updated";
 		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND " + IDType + " = ?";
 		PreparedStatement ps = null;
+		txt = "\n"+txt;
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, txt);
