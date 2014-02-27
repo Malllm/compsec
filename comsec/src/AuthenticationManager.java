@@ -97,18 +97,13 @@ public class AuthenticationManager {
 			rs.next();
 			txt = rs.getString("journal");
 		} catch (SQLException e) {
-			txt = "That person doesn't have a journal";
+			txt = "That person doesn't have a journal or you don't have access rights";
 		}finally {
 			try {
 				ps.close();
 				}  catch (SQLException e) {
 					e.printStackTrace();
 				}
-		}
-		System.out.println(txt);
-		if(txt.equals("null")){
-			txt = "no access rights";
-			System.out.println(txt);
 		}
 		return txt;
 		
