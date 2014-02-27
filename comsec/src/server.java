@@ -153,7 +153,8 @@ public class server implements Runnable {
                     				int nurseID = readNurseID(in, out);
                     				out.println("Text to insert into journal:*");
                     				temp = in.readLine();
-                    				am.createJournal(pnr, Integer.parseInt(subject), nurseID, temp);
+                    				String msg = am.createJournal(pnr, Integer.parseInt(subject), nurseID, temp);
+                    				out.println(msg);
                     				
                     				logCreate(subject, nurseID, pnr);
                     			}

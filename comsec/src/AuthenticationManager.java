@@ -24,7 +24,8 @@ public class AuthenticationManager {
 	 * @param nurseID
 	 * @param txt
 	 */
-	public void createJournal(long pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
+	public String createJournal(long pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
+		String msg = "Journal was created";
 		int division = doctorID / 100;
 		String sql = "INSERT INTO Journals VALUES(?, ?, ?, ?, ?)";
 		PreparedStatement ps = null;
@@ -37,7 +38,7 @@ public class AuthenticationManager {
 			ps.setString(5, txt);
 			ps.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			msg = "Journal was not created, it does already exist";
 		}finally {
 			try {
 				ps.close();
@@ -45,6 +46,7 @@ public class AuthenticationManager {
 					e.printStackTrace();
 				}
 		}
+		return msg;
 	}
 	
 	/**
