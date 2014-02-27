@@ -56,7 +56,8 @@ public class AuthenticationManager {
 	 * @param ID
 	 * @param IDType Either nurseID or doctorID.
 	 */
-	public void updateJournal(String txt, long pnr, int ID, String IDType) {
+	public String updateJournal(String txt, long pnr, int ID, String IDType) {
+		String msg = "Journal was updated";
 		String sql = "UPDATE Journals SET journal = CONCAT(journal, ?) WHERE pnr = ? AND " + IDType + " = ?";
 		PreparedStatement ps = null;
 		try {
@@ -64,7 +65,9 @@ public class AuthenticationManager {
 			ps.setString(1, txt);
 			ps.setLong(2, pnr);
 			ps.setInt(3, ID);
-			ps.executeUpdate();
+			if(0 == ps.executeUpdate()) {
+				msg = "Journal does not exist";
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -74,6 +77,7 @@ public class AuthenticationManager {
 					e.printStackTrace();
 				}
 		}
+		return msg;
 	}
 	
 	/**
@@ -143,14 +147,17 @@ public class AuthenticationManager {
 	 * Deletes the journal corresponding to the social security number, pnr.
 	 * @param pnr
 	 */
-	public void deleteJournal(long pnr) {
+	public String deleteJournal(long pnr) {
+		String msg = "Journal was deleted";
 		String sql = "DELETE FROM Journals WHERE pnr = ?";
 		PreparedStatement ps = null;
 		
 		try {
 			ps = conn.prepareStatement(sql);
 			ps.setLong(1, pnr);
-			ps.executeUpdate();
+			if(0 == ps.executeUpdate()) {
+				msg = "Journal does not exist";
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
@@ -160,6 +167,7 @@ public class AuthenticationManager {
 					e.printStackTrace();
 				}
 		}
+		return msg;
 	}
 }
 

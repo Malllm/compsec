@@ -118,7 +118,8 @@ public class server implements Runnable {
                     				out.println("Text to add to journal:*");
                     				out.flush();
                     				temp = in.readLine();
-                    				am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
+                    				String msg = am.updateJournal(temp, pnr, Integer.parseInt(subject), "nurseID");
+                    				out.println(msg);
                     				
                     				logWrite(subject, pnr);
                     			}
@@ -145,7 +146,8 @@ public class server implements Runnable {
                     				long pnr = readPnr(in, out);
                     				out.println("Text to add to journal:*");
                     				temp = in.readLine();
-                    				am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
+                    				String msg = am.updateJournal(temp, pnr, Integer.parseInt(subject), "doctorID");
+                    				out.println(msg);
                     				
                     				logWrite(subject, pnr);
                     			}else if(temp.equals("c")) {
@@ -178,7 +180,8 @@ public class server implements Runnable {
                                 	logRead(subject, pnr);
                     			}else if(temp.equals("d")){  
                     				long pnr = readPnr(in, out);
-                    				am.deleteJournal(pnr);
+                    				String msg = am.deleteJournal(pnr);
+                    				out.println(msg);
                     				
                     				logDelete(subject, pnr);
                     			}
