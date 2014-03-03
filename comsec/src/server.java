@@ -280,23 +280,6 @@ public class server implements Runnable {
     	}
 		return nurseID;
     }
-    
-    private String readText(BufferedReader in, PrintWriter out) {
-    	String temp;
-    	while(true){
-	    	try{
-				out.println("Text to insert into journal:*");
-	    		temp = in.readLine();
-	    		if(temp.startsWith("q") || temp.startsWith("Q")){
-    				break;
-    			}
-	    	}catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    	}
-		return temp;
-    }
 
     private void newListener() { (new Thread(this)).start(); } // calls run()
     public static void main(String args[]) {
