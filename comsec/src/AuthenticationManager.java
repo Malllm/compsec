@@ -23,6 +23,7 @@ public class AuthenticationManager {
 	 * @param doctorID
 	 * @param nurseID
 	 * @param txt
+	 * @return Message about how the creation went.
 	 */
 	public String createJournal(long pnr, int doctorID, int nurseID, String txt) { //addPerson i Gdocs
 		String msg = "Journal was created";
@@ -55,6 +56,7 @@ public class AuthenticationManager {
 	 * @param pnr
 	 * @param ID
 	 * @param IDType Either nurseID or doctorID.
+	 * @return Message about how a the update went.
 	 */
 	public String updateJournal(String txt, long pnr, int ID, String IDType) {
 		String msg = "Journal was updated";
@@ -147,6 +149,7 @@ public class AuthenticationManager {
 	/**
 	 * Deletes the journal corresponding to the social security number, pnr.
 	 * @param pnr
+	 * @return Message about how the deletion went.
 	 */
 	public String deleteJournal(long pnr) {
 		String msg = "Journal was deleted";
