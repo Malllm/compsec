@@ -91,7 +91,6 @@ public class AuthenticationManager {
 	 * @return The text in the journal as a String.
 	 */
 	public String getJournal(long pnr, int ID, String IDType) {
-		System.out.println("ID " + ID + " type " + IDType);
 		int division = ID / 100;
 		String sql = "SELECT journal FROM Journals WHERE pnr = ? AND (" + IDType + " = ? OR division = ?)";
 		PreparedStatement ps = null;
